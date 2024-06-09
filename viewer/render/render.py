@@ -38,12 +38,11 @@ def plot_gantt(
     )
     fig.update_yaxes(visible=False)
     _, ext = os.path.splitext(filename)
-    pio.write_html(
-        fig,
-        os.path.join(
-            outdir, filename if f".{format}" == ext else f"{filename}.{format}"
-        ),
+    output_filepath = os.path.join(
+        outdir, filename if f".{format}" == ext else f"{filename}.{format}"
     )
+    pio.write_html(fig, output_filepath)
+    print(f"Created file {output_filepath}")
 
 
 def print_to_stdout(
@@ -86,3 +85,4 @@ def print_to_stdout(
     print("workflow start date: ", workflow_start_date)
     print("workflow end date:   ", workflow_end_date)
     print("workflow exec time:  ", workflow_end_date - workflow_start_date)
+    print_split_section()

@@ -10,9 +10,12 @@ def get_path(path: str) -> str:
 
 def str_to_datetime(date: str):
     result = None
+    formats = ["%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"]
     if date:
-        try:
-            result = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.%f")
-        except ValueError:
-            result = datetime.strptime(date, "%Y-%m-%dT%H:%M:%S")
+        for format in formats:
+            try:
+                return datetime.strptime(date, format)
+            except ValueError:
+                pass
+        raise Exception("Not a valid date format")
     return result
