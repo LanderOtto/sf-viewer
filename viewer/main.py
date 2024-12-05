@@ -8,6 +8,7 @@ from viewer.core.utils import get_path
 from viewer.render.render import plot_gantt, print_to_stdout
 from viewer.translator.cwltool import scraping_log
 from viewer.translator.streamflow import check_and_analysis, get_steps
+from viewer.translator.toil import analysis
 
 
 def main(args):
@@ -31,6 +32,16 @@ def main(args):
             steps, workflow_start_date, workflow_end_date = scraping_log(
                 get_path(args.input)
             )
+        else:
+            raise Exception(f"Unknown input type: {args.input_type}")
+    elif args.workflow_manager == "cwltoil":
+        if args.input_type == "report":
+            steps, workflow_start_date, workflow_end_date = analysis(
+                get_path(args.inputs[0])
+            )
+
+        elif args.input_type == "log":
+            raise Exception("cwltool does not have an execution report")
         else:
             raise Exception(f"Unknown input type: {args.input_type}")
     else:
@@ -86,7 +97,7 @@ if __name__ == "__main__":
             "--workflow-manager",
             help="workflow manager output to analysis",
             type=str,
-            choices=["streamflow", "cwltool"],
+            choices=["streamflow", "cwltool", "cwltoil"],
             required=True,
         )
         args = parser.parse_args()
