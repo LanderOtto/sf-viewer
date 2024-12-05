@@ -7,22 +7,29 @@ import os
 from viewer.core.utils import get_path
 from viewer.render.render import plot_gantt, print_to_stdout
 from viewer.translator.cwltool import scraping_log
-from viewer.translator.streamflow import check_and_analysis, get_steps
+from viewer.translator.streamflow.report import check_and_analysis, get_steps
+from viewer.translator.streamflow.log import get_metadata_from_log
 from viewer.translator.toil import analysis
 
 
 def main(args):
+    if args.workflow_manager != "cwltool" and len(args.inputs) > 1:
+        raise NotImplementedError(
+            f"Only cwltool supports list of input files. Define a single input file for {args.workflow_manager}"
+        )
     if args.workflow_manager == "streamflow":
         if args.input_type == "report":
             # Get report from json file
-            with open(get_path(args.input)) as fd:
+            with open(get_path(args.inputs[0])) as fd:
                 data = json.load(fd)
             # Get Workflow start and end times
             workflow_start_date, workflow_end_date = check_and_analysis(data)
             # Get step times
             steps = get_steps(data, workflow_start_date)
         elif args.input_type == "log":
-            raise NotImplementedError("WIP. StreamFlow-log")
+            steps, workflow_start_date, workflow_end_date = get_metadata_from_log(
+                args.inputs[0]
+            )
         else:
             raise Exception(f"Unknown input type: {args.input_type}")
     elif args.workflow_manager == "cwltool":
@@ -30,7 +37,7 @@ def main(args):
             raise Exception("cwltool does not have an execution report")
         elif args.input_type == "log":
             steps, workflow_start_date, workflow_end_date = scraping_log(
-                get_path(args.input)
+                [get_path(path) for path in args.inputs]
             )
         else:
             raise Exception(f"Unknown input type: {args.input_type}")
@@ -72,10 +79,10 @@ if __name__ == "__main__":
         )
         parser.add_argument(
             "-i",
-            "--input",
-            help="Insert path file",
-            type=str,
+            "--inputs",
+            action="append",
             required=True,
+            type=str,
         )
         parser.add_argument(
             "-o",

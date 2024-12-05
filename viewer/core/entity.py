@@ -5,12 +5,23 @@ from typing import MutableSequence
 
 
 class Instance:
-    def __init__(self, start: timedelta, end: timedelta):
+    def __init__(
+        self,
+        start: timedelta,
+        end: timedelta | None,
+        location: str | None = None,
+        name: str | None = None,
+    ):
         self.start: timedelta = start
-        self.end: timedelta = end
+        self.end: timedelta | None = end
+        self.name = name
+        self.location = location
 
     def get_exec(self) -> timedelta:
         return self.end - self.start
+
+    def __str__(self):
+        return f"{self.name} {self.start} {self.end} {self.location}"
 
 
 class Step:
@@ -26,3 +37,6 @@ class Step:
 
     def get_exec(self) -> timedelta:
         return self.get_end() - self.get_start()
+
+    def __str__(self):
+        return f"{self.name}. Start: {self.get_start()}. End: {self.get_end()}"
