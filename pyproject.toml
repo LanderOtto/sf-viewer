@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wf-viewer"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dynamic = ["dependencies", "optional-dependencies", "version"]
+
+[project.scripts]
+streamflow = "viewer.main:run"
+
+[tool.setuptools]
+packages = [
+    "viewer",
+    "viewer.core",
+    "viewer.render",
+    "viewer.translator",
+    "viewer.translator.streamflow",
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+version = {attr = "viewer.version.VERSION"}
+
+[tool.setuptools.dynamic.optional-dependencies]
+lint = {file = "lint-requirements.txt"}
+
+[tool.codespell]
+ignore-words-list = "Crate,crate,NotIn,notin"
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["wf-viewer"]
+

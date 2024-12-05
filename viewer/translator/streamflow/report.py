@@ -25,7 +25,7 @@ def check_and_analysis(data: MutableMapping[str, Any]) -> tuple[datetime, dateti
         raise Exception("Impossible find start date of workflow")
     if workflow_end_date is None:
         raise Exception("Impossible find end date of workflow")
-    return (workflow_start_date, workflow_end_date)
+    return workflow_start_date, workflow_end_date
 
 
 def get_steps(
